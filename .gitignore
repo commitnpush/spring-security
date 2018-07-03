@@ -1,0 +1,5 @@
+.*
+!.gitignore
+/target/**
+/wepapp/WEB-INF/lib/*
+/webapp/WEB-INF/classes/**

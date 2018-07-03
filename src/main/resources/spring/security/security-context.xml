@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- spring security설정 -->
+	<!-- auto-config : http기본인증(사용자가 아이디/비밀번호로 직접인증)여부 -->
+	<!-- use-expression : SpEL사용 여부 -->
+	<security:http auto-config="true" use-expressions="true">
+		<!-- pattern : url패턴 -->
+		<!-- access : 접근권한 -->
+		<security:intercept-url pattern="/user/login" 
+								access="permitAll"/>
+		<security:intercept-url pattern="/resources/**" 
+								access="permitAll"/>
+		<security:intercept-url pattern="/manage/**" 
+								access="hasRole('ROLE_ADMIN')"/>
+		<security:intercept-url pattern="/**" 
+								access="hasRole('ROLE_USER')"/>
+		<!-- login-page : 로그인페이지 경로 -->
+		<!-- default-target-url : 로그인성공시 이동할 경로 -->
+		<!-- username-parameter : 아이디에 해당하는 property명 -->
+		<!-- password-parameter : 비밀번호에 해당하는 property명-->
+		<!-- authentication-failure-url : 로그인 실패시 이동할 경로 -->
+		<!-- always-use-default-target : 로그인 성공시 default-target-url으로 이동할지 여부  -->
+		<security:form-login login-page="/user/login"
+							 default-target-url="/"
+							 username-parameter="id"
+							 password-parameter="password"
+							 authentication-failure-url="/user/login?error"
+							 always-use-default-target="true"/>
+		<!-- invalidate-session : 로그아웃시 세션초기화 여부 -->
+		<!-- logout-url : 로그아웃 경로 -->
+		<!-- logout-success-url : 로그아웃 성공시 이동할 경로 -->							 
+		<security:logout invalidate-session="true"
+						 logout-url="/user/logout"
+						 logout-success-url="/user/login?logout"/>
+		<!-- cross site request forgery 방지 -->						 
+		<security:csrf/>						 							 
+	</security:http>
+	<security:authentication-manager>
+		<!-- user-service-ref : 인증에 사용할 service빈의 아이디 -->
+		<security:authentication-provider user-service-ref="userService"/>
+	</security:authentication-manager>
+
+</beans>
